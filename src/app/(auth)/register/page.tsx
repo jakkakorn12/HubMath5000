@@ -7,12 +7,9 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [studentCode, setStudentCode] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [studentCode, setStudentCode] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [classLevel, setClassLevel] = useState("ม.5");
-  const [studentNumber, setStudentNumber] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -26,17 +23,16 @@ export default function RegisterPage() {
       email,
       password,
       options: {
-        data: {
-          full_name: fullName,
-          student_code: studentCode,
-          class_level: classLevel,
-          student_number: studentNumber ? parseInt(studentNumber) : null,
-        },
+        data: { student_code: studentCode },
       },
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      const msgMap: Record<string, string> = {
+        "User already registered": "อีเมลนี้ถูกใช้งานแล้ว",
+        "Password should be at least 6 characters": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+      };
+      setError(msgMap[signUpError.message] ?? "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
       setLoading(false);
       return;
     }
@@ -47,52 +43,18 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">สมัครสมาชิก</h1>
+      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">สมัครสมาชิก</h1>
+        <p className="text-sm text-gray-400 text-center mb-6">ใช้รหัสประจำตัวนักเรียนของคุณ</p>
         <form onSubmit={handleRegister} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ชั้น</label>
-              <select
-                value={classLevel}
-                onChange={(e) => setClassLevel(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option>ม.4</option>
-                <option>ม.5</option>
-                <option>ม.6</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">เลขที่</label>
-              <input
-                type="number"
-                value={studentNumber}
-                onChange={(e) => setStudentNumber(e.target.value)}
-                min="1"
-                placeholder="1"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">เลขประจำตัวนักเรียน</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">รหัสประจำตัวนักเรียน</label>
             <input
               type="text"
               value={studentCode}
               onChange={(e) => setStudentCode(e.target.value)}
               required
-              placeholder="เช่น 67001"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
+              placeholder="เช่น 50852"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

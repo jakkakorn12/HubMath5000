@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [studentCode, setStudentCode] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,28 +17,44 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError(error.message);
+
+    const { data: emailData, error: rpcError } = await supabase
+      .rpc("get_email_by_student_code", { p_student_code: studentCode });
+
+    if (rpcError || !emailData) {
+      setError("ไม่พบรหัสประจำตัวนี้ในระบบ");
       setLoading(false);
-    } else {
-      router.push("/dashboard");
-      router.refresh();
+      return;
     }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: emailData,
+      password,
+    });
+
+    if (signInError) {
+      setError("รหัสผ่านไม่ถูกต้อง");
+      setLoading(false);
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">เข้าสู่ระบบ</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">รหัสประจำตัวนักเรียน</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={studentCode}
+              onChange={(e) => setStudentCode(e.target.value)}
               required
+              placeholder="เช่น 50852"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

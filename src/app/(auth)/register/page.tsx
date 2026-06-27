@@ -32,19 +32,6 @@ export default function RegisterPage() {
       return;
     }
 
-    if (data.user) {
-      const { error: insertError } = await supabase.from("students").insert({
-        id: data.user.id,
-        student_code: studentCode,
-        full_name: fullName,
-      });
-      if (insertError) {
-        setError(insertError.message);
-        setLoading(false);
-        return;
-      }
-    }
-
     router.push("/dashboard");
     router.refresh();
   }

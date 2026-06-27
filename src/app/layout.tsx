@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ระบบห้องเรียน",
-  description: "ระบบจัดการงานและห้องเรียน",
+  title: "HubMath",
+  description: "ระบบจัดการงานและห้องเรียนคณิตศาสตร์",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

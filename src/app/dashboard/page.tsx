@@ -51,7 +51,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm border-b">
         <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-lg font-bold text-gray-800">ระบบห้องเรียน</h1>
+          <h1 className="text-lg font-bold text-gray-800">HubMath</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">{student?.full_name ?? user.email}</span>
             <form action="/auth/signout" method="POST">

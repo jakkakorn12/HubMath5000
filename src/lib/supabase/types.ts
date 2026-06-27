@@ -31,9 +31,11 @@ export type Database = {
           id: string;
           student_code: string;
           full_name: string;
+          class_level: string;
+          student_number: number | null;
           created_at: string;
         };
-        Insert: { id: string; student_code: string; full_name: string };
+        Insert: { id: string; student_code: string; full_name: string; class_level?: string; student_number?: number | null };
         Update: Partial<Database["public"]["Tables"]["students"]["Insert"]>;
       };
       student_sections: {

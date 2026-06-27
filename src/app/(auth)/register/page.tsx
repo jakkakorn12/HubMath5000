@@ -11,6 +11,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [studentCode, setStudentCode] = useState("");
   const [fullName, setFullName] = useState("");
+  const [classLevel, setClassLevel] = useState("ม.5");
+  const [studentNumber, setStudentNumber] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,10 +22,17 @@ export default function RegisterPage() {
     setError(null);
     const supabase = createClient();
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, student_code: studentCode } },
+      options: {
+        data: {
+          full_name: fullName,
+          student_code: studentCode,
+          class_level: classLevel,
+          student_number: studentNumber ? parseInt(studentNumber) : null,
+        },
+      },
     });
 
     if (signUpError) {
@@ -37,12 +46,37 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">สมัครสมาชิก</h1>
         <form onSubmit={handleRegister} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">ชั้น</label>
+              <select
+                value={classLevel}
+                onChange={(e) => setClassLevel(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>ม.4</option>
+                <option>ม.5</option>
+                <option>ม.6</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">เลขที่</label>
+              <input
+                type="number"
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
+                min="1"
+                placeholder="1"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">รหัสนักเรียน</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">เลขประจำตัวนักเรียน</label>
             <input
               type="text"
               value={studentCode}

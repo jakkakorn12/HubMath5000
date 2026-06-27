@@ -143,19 +143,43 @@ export default async function AssignmentsPage({
         {/* ตารางสรุปคะแนน */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
           <h2 className="text-sm font-semibold text-gray-500 mb-3">สรุปคะแนน</h2>
-          <div className="grid grid-cols-5 gap-2">
-            {summaryItems.map((item) => (
-              <div
-                key={item.label}
-                className={`rounded-xl border p-3 text-center ${colorMap[item.color]}`}
-              >
-                <p className="text-xs font-medium leading-tight mb-2">{item.label}</p>
-                <p className="text-xs text-gray-400">/{item.max}</p>
-                <p className="text-xl font-bold mt-0.5">
-                  {item.scored > 0 ? item.scored : "—"}
-                </p>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-center border-collapse">
+              <thead>
+                <tr className="bg-gray-50">
+                  {summaryItems.map((item) => (
+                    <th key={item.label} className="border border-gray-200 px-3 py-2 font-medium text-gray-600">
+                      {item.label}
+                    </th>
+                  ))}
+                  <th className="border border-gray-200 px-3 py-2 font-semibold text-gray-800 bg-gray-100">รวม</th>
+                </tr>
+                <tr className="text-xs text-gray-400">
+                  {summaryItems.map((item) => (
+                    <td key={item.label} className="border border-gray-200 px-3 py-1">
+                      /{item.max}
+                    </td>
+                  ))}
+                  <td className="border border-gray-200 px-3 py-1 bg-gray-50">
+                    /{summaryItems.reduce((s, i) => s + i.max, 0)}
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {summaryItems.map((item) => (
+                    <td key={item.label} className="border border-gray-200 px-3 py-3 font-bold text-gray-800 text-base">
+                      {item.scored > 0 ? item.scored : "—"}
+                    </td>
+                  ))}
+                  <td className="border border-gray-200 px-3 py-3 font-bold text-blue-700 text-base bg-blue-50">
+                    {summaryItems.reduce((s, i) => s + i.scored, 0) > 0
+                      ? summaryItems.reduce((s, i) => s + i.scored, 0)
+                      : "—"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

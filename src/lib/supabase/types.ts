@@ -33,7 +33,7 @@ export type Database = {
           full_name: string;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["students"]["Row"], "created_at">;
+        Insert: { id: string; student_code: string; full_name: string };
         Update: Partial<Database["public"]["Tables"]["students"]["Insert"]>;
       };
       student_sections: {

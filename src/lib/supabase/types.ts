@@ -63,6 +63,17 @@ export type Database = {
         Insert: Omit<Database["public"]["Tables"]["assignments"]["Row"], "id" | "created_at">;
         Update: Partial<Database["public"]["Tables"]["assignments"]["Insert"]>;
       };
+      score_cache: {
+        Row: {
+          id: string;
+          student_code: string;
+          assignment_id: string;
+          score: number | null;
+          updated_at: string;
+        };
+        Insert: Omit<{ id: string; student_code: string; assignment_id: string; score?: number | null; updated_at?: string }, "id" | "updated_at">;
+        Update: Partial<{ student_code: string; assignment_id: string; score: number | null }>;
+      };
       submissions: {
         Row: {
           id: string;

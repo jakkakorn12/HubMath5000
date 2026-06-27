@@ -36,10 +36,11 @@ export default async function AssignmentsPage({
   if (!user) redirect("/login");
   if (!subject_id) redirect("/dashboard");
 
-  const [{ data: subject }, { data: student }, { data: assignments }, { data: submissions }, { data: enrollment }] =
+  const { data: student } = await supabase.from("students").select("*").eq("id", user.id).single();
+
+  const [{ data: subject }, { data: assignments }, { data: submissions }, { data: enrollment }, { data: scoreCache }] =
     await Promise.all([
       supabase.from("subjects").select("*").eq("id", subject_id).single(),
-      supabase.from("students").select("*").eq("id", user.id).single(),
       supabase.from("assignments").select("*").eq("subject_id", subject_id)
         .order("term").order("category").order("created_at"),
       supabase.from("submissions").select("assignment_id, score").eq("student_id", user.id),
@@ -49,9 +50,12 @@ export default async function AssignmentsPage({
         .eq("sections.subject_id", subject_id)
         .limit(1)
         .single(),
+      supabase.from("score_cache").select("assignment_id, score").eq("student_code", student?.student_code ?? ""),
     ]);
 
-  const subMap = new Map(submissions?.map((s) => [s.assignment_id, s.score]) ?? []);
+  // merge: score_cache เป็น fallback ถ้ายังไม่มีใน submissions
+  const cacheMap = new Map(scoreCache?.map((s) => [s.assignment_id, s.score]) ?? []);
+  const subMap = new Map([...cacheMap, ...(submissions?.map((s) => [s.assignment_id, s.score]) ?? [])]);
 
   const roomName = (enrollment?.sections as { name: string } | null)?.name ?? "—";
 
